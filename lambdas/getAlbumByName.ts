@@ -1,7 +1,7 @@
 import { Handler } from "aws-lambda";
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 const ddbDocClient = createDDbDocClient();
 
@@ -10,36 +10,40 @@ export const handler: Handler = async (event, context) => {
     // Print Event
     console.log("Event: ", JSON.stringify(event?.queryStringParameters));
     const parameters = event?.queryStringParameters;
-    const movieId = parameters ? parseInt(parameters.movieId) : undefined;
+    const albumName = parameters.albumName ? parameters.albumName : undefined;
 
-    if (!movieId) {
+
+    if (!albumName) {
       return {
         statusCode: 404,
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ Message: "Missing movie Id" }),
+        body: JSON.stringify({ Message: "Album not found" }),
       };
     }
 
     const commandOutput = await ddbDocClient.send(
-      new GetCommand({
+      new QueryCommand({
         TableName: process.env.TABLE_NAME,
-        Key: { id: movieId },
+        KeyConditionExpression: "album_name = :album_name" ,
+        ExpressionAttributeValues: {
+            ":album_name": albumName,
+        },
       })
     );
-    console.log("GetCommand response: ", commandOutput);
-    if (!commandOutput.Item) {
+    
+    if (!commandOutput.Items) {
       return {
         statusCode: 404,
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ Message: "Invalid movie Id" }),
+        body: JSON.stringify({ Message: "Invalid Album Name" }),
       };
     }
     const body = {
-      data: commandOutput.Item,
+      data: commandOutput.Items,
     };
 
     // Return Response

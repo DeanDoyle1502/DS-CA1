@@ -24,22 +24,31 @@ export class RestAPIStack extends cdk.Stack {
 
 
     
-    // Functions 
-    // const getMovieByIdFn = new lambdanode.NodejsFunction(
-    //   this,
-    //   "GetMovieByIdFn",
-    //   {
-    //     architecture: lambda.Architecture.ARM_64,
-    //     runtime: lambda.Runtime.NODEJS_18_X,
-    //     entry: `${__dirname}/../lambdas/getMovieById.ts`,
-    //     timeout: cdk.Duration.seconds(10),
-    //     memorySize: 128,
-    //     environment: {
-    //       TABLE_NAME: moviesTable.tableName,
-    //       REGION: 'eu-west-1',
-    //     },
-    //   }
-    //   );
+    //Functions 
+    const getAlbumByNameFn = new lambdanode.NodejsFunction(
+      this,
+      "GetAlbumByNameFn",
+      {
+        architecture: lambda.Architecture.ARM_64,
+        runtime: lambda.Runtime.NODEJS_18_X,
+        entry: `${__dirname}/../lambdas/getAlbumByName.ts`,
+        timeout: cdk.Duration.seconds(10),
+        memorySize: 128,
+        environment: {
+          TABLE_NAME: songsTable.tableName,
+          REGION: 'eu-west-1',
+        },
+      }
+      )
+
+      const getAlbumByNameURL = getAlbumByNameFn.addFunctionUrl({
+        authType: lambda.FunctionUrlAuthType.NONE,
+        cors: {
+          allowedOrigins: ["*"],
+        },
+      });
+  
+      songsTable.grantReadData(getAlbumByNameFn)
       
       // const getAllMoviesFn = new lambdanode.NodejsFunction(
       //   this,
@@ -66,7 +75,7 @@ export class RestAPIStack extends cdk.Stack {
                 [songsTable.tableName]: generateBatch(songs),
               },
             },
-            physicalResourceId: custom.PhysicalResourceId.of("moviesddbInitData"), //.of(Date.now().toString()),
+            physicalResourceId: custom.PhysicalResourceId.of("songsddbInitData"), //.of(Date.now().toString()),
           },
           policy: custom.AwsCustomResourcePolicy.fromSdkCalls({
             resources: [songsTable.tableArn],
@@ -88,7 +97,11 @@ export class RestAPIStack extends cdk.Stack {
     });
 
     const songsEndpoint = api.root.addResource("songs");
-    
+    songsEndpoint.addMethod(
+      "GET",
+      new apig.LambdaIntegration(getAlbumByNameFn, { proxy: true})
+    );
+
     // moviesEndpoint.addMethod(
     //   "GET",
     //   new apig.LambdaIntegration(getAllMoviesFn, { proxy: true })
