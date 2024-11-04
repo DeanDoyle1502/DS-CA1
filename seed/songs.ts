@@ -2,7 +2,7 @@ import {Song} from '../shared/types'
 
 export const songs : Song[] = [
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Come Together",
   artist: "The Beatles",
   track_length: 4.20,
@@ -10,7 +10,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Something",
   artist: "The Beatles",
   track_length: 3.30,
@@ -18,7 +18,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Maxwell's Silver Hammer",
   artist: "The Beatles",
   track_length: 3.27,
@@ -26,7 +26,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Oh! Darling",
   artist: "The Beatles",
   track_length: 3.27,
@@ -34,7 +34,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Octopus's Garden",
   artist: "The Beatles",
   track_length: 2.51,
@@ -42,7 +42,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "I Want You(She's So Heavy)",
   artist: "The Beatles",
   track_length: 7.47,
@@ -50,7 +50,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Here Comes the Sun",
   artist: "The Beatles",
   track_length: 3.60,
@@ -58,7 +58,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Because",
   artist: "The Beatles",
   track_length: 2.46,
@@ -66,7 +66,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "You Never Give Me Your Money",
   artist: "The Beatles",
   track_length: 4.02,
@@ -74,7 +74,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Sun King",
   artist: "The Beatles",
   track_length: 2.26,
@@ -82,7 +82,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Mean Mr.Mustard",
   artist: "The Beatles",
   track_length: 1.06,
@@ -90,7 +90,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Polythene Pam",
   artist: "The Beatles",
   track_length: 1.13,
@@ -98,7 +98,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "She Came In Through The Bathroom Window",
   artist: "The Beatles",
   track_length: 1.58,
@@ -106,7 +106,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Golden Slumbers",
   artist: "The Beatles",
   track_length: 1.32,
@@ -114,7 +114,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Carry That Weight",
   artist: "The Beatles",
   track_length: 1.37,
@@ -122,7 +122,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "The End",
   artist: "The Beatles",
   track_length: 2.20,
@@ -130,7 +130,7 @@ export const songs : Song[] = [
   released: 1969,
 },
 {
-  album_Name: "Abbey Road",      
+  album_name: "Abbey Road",      
   song_title: "Her Majesty",
   artist: "The Beatles",
   track_length: 0.23,

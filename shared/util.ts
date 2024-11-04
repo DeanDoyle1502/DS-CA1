@@ -1,16 +1,16 @@
 import { marshall } from "@aws-sdk/util-dynamodb";
-import { Movie } from "./types";
+import { Song } from "./types";
 
-export const generateMovieItem = (movie: Movie) => {
+export const generateSongItem = (song: Song) => {
   return {
     PutRequest: {
-      Item: marshall(movie),
+      Item: marshall(song),
     },
   };
 };
 
-export const generateBatch = (data: Movie[]) => {
+export const generateBatch = (data: Song[]) => {
   return data.map((e) => {
-    return generateMovieItem(e);
+    return generateSongItem(e);
   });
 };

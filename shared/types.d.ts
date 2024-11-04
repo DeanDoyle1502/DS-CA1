@@ -2,7 +2,7 @@
 
 
 export type Song = {
-  album_Name: string,      
+  album_name: string,      
   song_title: string,
   artist: string,
   track_length: number,
