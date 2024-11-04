@@ -1,20 +1,13 @@
 // export type Language = 'English' | 'Frenc
 
-export type Movie =   {
-  id: number,
-  backdrop_path: string,
-  genre_ids: number[ ],
-  original_language: string,
-  original_title: string,
-  adult: boolean,
-  overview: string,
-  popularity: number,
-  poster_path: string,
-  release_date: string,
-  title: string,
-  video: boolean,
-  vote_average: number,
-  vote_count: number
+
+export type Song = {
+  album_Name: string,      
+  song_title: string,
+  artist: string,
+  track_length: number,
+  genre: string,
+  released: number,
 }
 
  
