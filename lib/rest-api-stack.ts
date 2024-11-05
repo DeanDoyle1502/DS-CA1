@@ -53,6 +53,22 @@ export class RestAPIStack extends cdk.Stack {
           REGION: "eu-west-1",
         },
       });
+
+      const updateSongFn = new lambdanode.NodejsFunction(
+        this,
+        "UpdateSongFn",
+        {
+          architecture: lambda.Architecture.ARM_64,
+          runtime: lambda.Runtime.NODEJS_18_X,
+          entry: `${__dirname}/../lambdas/updateSong.ts`, // Ensure you create this file
+          timeout: cdk.Duration.seconds(10),
+          memorySize: 128,
+          environment: {
+            TABLE_NAME: songsTable.tableName,
+            REGION: 'eu-west-1',
+          },
+        }
+      );
       
 
 
@@ -83,6 +99,7 @@ export class RestAPIStack extends cdk.Stack {
         //Permissions
         songsTable.grantReadData(getAlbumByNameFn)
         songsTable.grantReadWriteData(newAlbumFn)
+        songsTable.grantReadWriteData(updateSongFn)
        
 
         // REST API 
@@ -108,7 +125,11 @@ export class RestAPIStack extends cdk.Stack {
     songsEndpoint.addMethod(
       "POST",
       new apig.LambdaIntegration(newAlbumFn, { proxy: true})
-    )
+    );
+    songsEndpoint.addMethod(
+      "PUT",
+      new apig.LambdaIntegration(updateSongFn, { proxy: true})
+    );
   
 }
 }
