@@ -7,6 +7,7 @@ import * as custom from "aws-cdk-lib/custom-resources";
 import { Construct } from "constructs";
 import { generateBatch } from "../shared/util";
 import { songs } from "../seed/songs";
+import * as iam from 'aws-cdk-lib/aws-iam'
 
 export class RestAPIStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -69,6 +70,17 @@ export class RestAPIStack extends cdk.Stack {
           },
         }
       );
+      const translateTextFn = new lambdanode.NodejsFunction(this, "TranslateTextFn", {
+        architecture: lambda.Architecture.ARM_64,
+        runtime: lambda.Runtime.NODEJS_18_X,
+        entry: `${__dirname}/../lambdas/translate.ts`,
+        timeout: cdk.Duration.seconds(10),
+        memorySize: 128,
+        environment: {
+            REGION: 'eu-west-1',
+        },
+    });
+      
       
 
 
@@ -100,6 +112,14 @@ export class RestAPIStack extends cdk.Stack {
         songsTable.grantReadData(getAlbumByNameFn)
         songsTable.grantReadWriteData(newAlbumFn)
         songsTable.grantReadWriteData(updateSongFn)
+        songsTable.grantReadWriteData(translateTextFn)
+
+        translateTextFn.addToRolePolicy(new iam.PolicyStatement({
+          actions: ['translate:TranslateText'],
+          resources: ['*'], 
+        }));
+
+        
        
 
         // REST API 
@@ -130,6 +150,9 @@ export class RestAPIStack extends cdk.Stack {
       "PUT",
       new apig.LambdaIntegration(updateSongFn, { proxy: true})
     );
+
+    const translateEndpoint = api.root.addResource("translate")
+    translateEndpoint.addMethod("POST", new apig.LambdaIntegration(translateTextFn, {proxy: true}))
   
 }
 }
