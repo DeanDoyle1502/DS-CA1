@@ -7,10 +7,11 @@ const ddbDocClient = createDDbDocClient();
 
 export const handler: Handler = async (event, context) => {
   try {
-    // Print Event
+    
     console.log("Event: ", JSON.stringify(event?.queryStringParameters));
     const parameters = event?.queryStringParameters;
     const albumName = parameters.albumName ? parameters.albumName : undefined;
+    const songTitle = parameters.songTitle ? parameters.songTitle : undefined;
 
 
     if (!albumName) {
@@ -23,15 +24,23 @@ export const handler: Handler = async (event, context) => {
       };
     }
 
-    const commandOutput = await ddbDocClient.send(
-      new QueryCommand({
-        TableName: process.env.TABLE_NAME,
-        KeyConditionExpression: "album_name = :album_name" ,
-        ExpressionAttributeValues: {
-            ":album_name": albumName,
-        },
-      })
-    );
+    const commandInput = {
+      TableName: process.env.TABLE_NAME,
+      KeyConditionExpression: "album_name = :album_name",
+      ExpressionAttributeValues: {
+        ":album_name": albumName,
+      },
+    };
+
+    const commandOutput = await ddbDocClient.send(new QueryCommand(commandInput));
+
+    let songQuery = commandOutput.Items || [];
+    if (songTitle) {
+      songQuery = songQuery.filter((song) => song.song_title === songTitle);
+    }
+
+    
+
     
     if (!commandOutput.Items) {
       return {
@@ -39,11 +48,11 @@ export const handler: Handler = async (event, context) => {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ Message: "Invalid Album Name" }),
+        body: JSON.stringify({ Message: "Invalid Album Name or Song Title" }),
       };
     }
     const body = {
-      data: commandOutput.Items,
+      data: songQuery,
     };
 
     // Return Response
@@ -52,7 +61,7 @@ export const handler: Handler = async (event, context) => {
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ data: songQuery }),
     };
   } catch (error: any) {
     console.log(JSON.stringify(error));
