@@ -5,7 +5,6 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as custom from "aws-cdk-lib/custom-resources";
 import { Construct } from "constructs";
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { generateBatch } from "../shared/util";
 import { songs } from "../seed/songs";
 
@@ -40,6 +39,22 @@ export class RestAPIStack extends cdk.Stack {
         },
       }
       )
+      
+     
+
+      const newAlbumFn = new lambdanode.NodejsFunction(this, "AddAlbumFn",{
+        architecture : lambda.Architecture.ARM_64,
+        runtime: lambda.Runtime.NODEJS_18_X,
+        entry: `${__dirname}/../lambdas/addAlbum.ts`,
+        timeout: cdk.Duration.seconds(10),
+        memorySize: 128,
+        environment: {
+          TABLE_NAME: songsTable.tableName,
+          REGION: "eu-west-1",
+        },
+      });
+      
+
 
       const getAlbumByNameURL = getAlbumByNameFn.addFunctionUrl({
         authType: lambda.FunctionUrlAuthType.NONE,
@@ -47,24 +62,7 @@ export class RestAPIStack extends cdk.Stack {
           allowedOrigins: ["*"],
         },
       });
-  
-      songsTable.grantReadData(getAlbumByNameFn)
       
-      // const getAllMoviesFn = new lambdanode.NodejsFunction(
-      //   this,
-      //   "GetAllMoviesFn",
-      //   {
-      //     architecture: lambda.Architecture.ARM_64,
-      //     runtime: lambda.Runtime.NODEJS_18_X,
-      //     entry: `${__dirname}/../lambdas/getAllMovies.ts`,
-      //     timeout: cdk.Duration.seconds(10),
-      //     memorySize: 128,
-      //     environment: {
-      //       TABLE_NAME: moviesTable.tableName,
-      //       REGION: 'eu-west-1',
-      //     },
-      //   }
-      //   );
         
         new custom.AwsCustomResource(this, "songsddbInitData", {
           onCreate: {
@@ -82,6 +80,11 @@ export class RestAPIStack extends cdk.Stack {
           }),
         });
 
+        //Permissions
+        songsTable.grantReadData(getAlbumByNameFn)
+        songsTable.grantReadWriteData(newAlbumFn)
+       
+
         // REST API 
     const api = new apig.RestApi(this, "RestAPI", {
       description: "demo api",
@@ -96,28 +99,17 @@ export class RestAPIStack extends cdk.Stack {
       },
     });
 
+    //Api Endpoints
     const songsEndpoint = api.root.addResource("songs");
     songsEndpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getAlbumByNameFn, { proxy: true})
     );
-
-    // moviesEndpoint.addMethod(
-    //   "GET",
-    //   new apig.LambdaIntegration(getAllMoviesFn, { proxy: true })
-    // );
-
-    // const movieEndpoint = moviesEndpoint.addResource("{movieId}");
-    // movieEndpoint.addMethod(
-    //   "GET",
-    //   new apig.LambdaIntegration(getMovieByIdFn, { proxy: true })
-    // );
-        
-        // // Permissions 
-        // moviesTable.grantReadData(getMovieByIdFn)
-        // moviesTable.grantReadData(getAllMoviesFn)
-        
-        
-      }
-    }
+    songsEndpoint.addMethod(
+      "POST",
+      new apig.LambdaIntegration(newAlbumFn, { proxy: true})
+    )
+  
+}
+}
     
