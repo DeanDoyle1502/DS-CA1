@@ -61,7 +61,7 @@ export class RestAPIStack extends cdk.Stack {
         {
           architecture: lambda.Architecture.ARM_64,
           runtime: lambda.Runtime.NODEJS_18_X,
-          entry: `${__dirname}/../lambdas/updateSong.ts`, // Ensure you create this file
+          entry: `${__dirname}/../lambdas/updateSong.ts`, 
           timeout: cdk.Duration.seconds(10),
           memorySize: 128,
           environment: {
@@ -77,6 +77,7 @@ export class RestAPIStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(10),
         memorySize: 128,
         environment: {
+            TABLE_NAME: songsTable.tableName,
             REGION: 'eu-west-1',
         },
     });
@@ -119,6 +120,10 @@ export class RestAPIStack extends cdk.Stack {
           resources: ['*'], 
         }));
 
+        translateTextFn.role?.addManagedPolicy(
+          iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
+      );
+
         
        
 
@@ -152,8 +157,15 @@ export class RestAPIStack extends cdk.Stack {
     );
 
     const translateEndpoint = api.root.addResource("translate")
-    translateEndpoint.addMethod("POST", new apig.LambdaIntegration(translateTextFn, {proxy: true}))
-  
+    translateEndpoint.addMethod(
+      "POST", 
+    new apig.LambdaIntegration(translateTextFn, {proxy: true})
+    );
+    translateEndpoint.addMethod(
+      "GET",
+      new apig.LambdaIntegration(translateTextFn, {proxy: true})
+    )
+    
 }
 }
     
