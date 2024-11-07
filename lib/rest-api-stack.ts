@@ -9,9 +9,15 @@ import { generateBatch } from "../shared/util";
 import { songs } from "../seed/songs";
 import * as iam from 'aws-cdk-lib/aws-iam'
 
-export class RestAPIStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+type AppApiProps = {
+  userPoolId: string;
+  userPoolClientId: string;
+};
+
+
+export class RestAPIStack extends Construct {
+  constructor(scope: Construct, id: string, props: AppApiProps) {
+    super(scope, id);
 
     // Table 
     const songsTable = new dynamodb.Table(this, "SongTable", {

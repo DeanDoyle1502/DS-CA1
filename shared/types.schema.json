@@ -1,0 +1,90 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "ConfirmSignUpBody": {
+            "additionalProperties": false,
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "code",
+                "username"
+            ],
+            "type": "object"
+        },
+        "SignInBody": {
+            "additionalProperties": false,
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "password",
+                "username"
+            ],
+            "type": "object"
+        },
+        "SignUpBody": {
+            "additionalProperties": false,
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "type": "object"
+        },
+        "Song": {
+            "additionalProperties": false,
+            "properties": {
+                "album_name": {
+                    "type": "string"
+                },
+                "artist": {
+                    "type": "string"
+                },
+                "genre": {
+                    "type": "string"
+                },
+                "released": {
+                    "type": "number"
+                },
+                "song_title": {
+                    "type": "string"
+                },
+                "track_length": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "album_name",
+                "artist",
+                "genre",
+                "released",
+                "song_title",
+                "track_length"
+            ],
+            "type": "object"
+        }
+    }
+}
+
