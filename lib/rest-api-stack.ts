@@ -19,6 +19,30 @@ export class RestAPIStack extends Construct {
   constructor(scope: Construct, id: string, props: AppApiProps) {
     super(scope, id);
 
+    const authorizerFn = new lambdanode.NodejsFunction(this, "AuthorizerFn", {
+      architecture: lambda.Architecture.ARM_64,
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 128,
+      runtime: lambda.Runtime.NODEJS_18_X,
+      entry: `${__dirname}/../lambdas/auth/authorizer.ts`,
+      handler: "handler",
+      environment: {
+        USER_POOL_ID: props.userPoolId,
+        CLIENT_ID: props.userPoolClientId,
+        REGION: cdk.Aws.REGION,
+      },
+    });
+
+    const requestAuthorizer = new apig.RequestAuthorizer(
+      this,
+      "RequestAuthorizer",
+      {
+        identitySources: [apig.IdentitySource.header("cookie")],
+        handler: authorizerFn,
+        resultsCacheTtl: cdk.Duration.minutes(0),
+      }
+    );
+
     // Table 
     const songsTable = new dynamodb.Table(this, "SongTable", {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
@@ -155,11 +179,17 @@ export class RestAPIStack extends Construct {
     );
     songsEndpoint.addMethod(
       "POST",
-      new apig.LambdaIntegration(newAlbumFn, { proxy: true})
+      new apig.LambdaIntegration(newAlbumFn, { proxy: true}),{
+      authorizer: requestAuthorizer,
+      authorizationType: apig.AuthorizationType.CUSTOM,
+      }
     );
     songsEndpoint.addMethod(
       "PUT",
-      new apig.LambdaIntegration(updateSongFn, { proxy: true})
+      new apig.LambdaIntegration(updateSongFn, { proxy: true}),{
+        authorizer: requestAuthorizer,
+        authorizationType: apig.AuthorizationType.CUSTOM,
+      }
     );
 
     const translateEndpoint = api.root.addResource("translate")
