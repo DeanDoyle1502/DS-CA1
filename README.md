@@ -1,10 +1,10 @@
-Distributed Systems - CA1
+
 
 ## Serverless REST Assignment - Distributed Systems.
 
-__Name:__ ....your name .....
+__Name:__ Dean Doyle
 
-__Demo:__ ... link to your YouTube video demonstration ......
+__Demo:__ https://youtu.be/HO74uFIrEBw
 
 ### Context.
 I added a table which holds musical albums the partition key is the album name and the sort key is the song title. It also holds details in genre, release ate and track length.
